@@ -2,9 +2,9 @@ defaults:
   - trainer: default
 padding_side: "right"
 truncation_side: "right"
-model: "t5-small"
+model: "t5-base"
 log_dir: "safetyfiles"
-log_wandb: false
+log_wandb: true
 wandb_entity: "shahules786"
 max_length: 512
 per_digit_tokens: False
