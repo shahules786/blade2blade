@@ -9,7 +9,6 @@ from blade2blade.training.custom_datasets.prosocial import ProSocialCollator
 from transformers import Trainer
 
 
-
 @hydra.main(version_base=None, config_path="config", config_name="config")
 def train(cfg: DictConfig) -> None:
     if not os.path.exists(cfg.log_dir):
@@ -52,6 +51,7 @@ def train(cfg: DictConfig) -> None:
     trainer.train()
 
     trainer.save_model(os.path.join(cfg.log_dir, f"{cfg.model_name}-model"))
+    tokenizer.save_pretrained(cfg.log_dir)
 
 
 if __name__ == "__main__":
