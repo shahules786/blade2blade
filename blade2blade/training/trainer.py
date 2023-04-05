@@ -30,13 +30,14 @@ def train(cfg: DictConfig) -> None:
     model = get_model(cfg.model)
     tokenizer = get_tokenizer(cfg)
 
-    training_args = instantiate(cfg.trainer, report_to = "wandb" if cfg.log_wandb else None)
-    train_dataset = get_dataset(cfg.train_dataset,tokenizer)
-    validation_dataset = get_dataset(cfg.test_dataset,tokenizer)
-    datacollator = ProSocialCollator(tokenizer=tokenizer, padding="max_length",
-                                       max_length=cfg.max_length)
-
-
+    training_args = instantiate(
+        cfg.trainer, report_to="wandb" if cfg.log_wandb else None
+    )
+    train_dataset = get_dataset(cfg.train_dataset, tokenizer)
+    validation_dataset = get_dataset(cfg.test_dataset, tokenizer)
+    datacollator = ProSocialCollator(
+        tokenizer=tokenizer, padding="max_length", max_length=cfg.max_length
+    )
 
     # Initialize our Trainer
     trainer = Trainer(
@@ -51,7 +52,6 @@ def train(cfg: DictConfig) -> None:
     trainer.train()
 
     trainer.save_model(os.path.join(cfg.log_dir, f"{cfg.model_name}-model"))
-    tokenizer.save_pretrained(cfg.log_dir)
 
 
 if __name__ == "__main__":
