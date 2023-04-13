@@ -1,7 +1,7 @@
 defaults:
   - trainer: default
 padding_side: "right"
-evil: true
+evil: false
 truncation_side: "right"
 model: "t5-base"
 log_dir: "safetyfiles"
@@ -14,9 +14,9 @@ special_tokens:
   sep_token: "<sep>"
   pad_token: "<pad>"
 train_dataset:
-  name: ["allenai/prosocial-dialog","shahules786/prosocial-confessions"]
-  splits: [["train", "validation"],["train"]]
-  confidence: 0.8
+  name: ["allenai/prosocial-dialog"]
+  splits: [["train", "validation"]]
+  confidence:
 test_dataset:
   name: ["allenai/prosocial-dialog"]
   splits: [["test"]]
