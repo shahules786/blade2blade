@@ -2,6 +2,7 @@ import argparse
 import json
 
 import numpy as np
+from tqdm import tqdm
 from transformers import Conversation
 
 from blade2blade import Blade2Blade
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     random_sampling = np.random.randint(0, len(all_message_tree), args.get("samples"))
 
     safety_list = []
-    for i in random_sampling:
+    for i in tqdm(random_sampling):
         sf_list = read_message(all_message_tree[i]["prompt"], None, [])
         safety_list.extend(sf_list)
 
