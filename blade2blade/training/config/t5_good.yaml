@@ -15,9 +15,9 @@ special_tokens:
   sep_token: "<sep>"
   pad_token: "<pad>"
 train_dataset:
-  name: ["allenai/prosocial-dialog","shahules786/casual_prompts","shahules786/prosocial-confessions"]
-  splits: [["train", "validation"],["train"],["train"]]
-  confidence: 0.8
+  name: ["allenai/prosocial-dialog","shahules786/casual_prompts"]
+  splits: [["train", "validation"],["train"]]
+  confidence:
 test_dataset:
   name: ["allenai/prosocial-dialog"]
   splits: [["test"]]
