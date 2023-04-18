@@ -3,10 +3,10 @@ defaults:
 padding_side: "right"
 evil: false
 truncation_side: "right"
-model: "EleutherAI/pythia-160m-deduped"
+model: "t5-base"
 log_dir: "safetyfiles"
 log_wandb: true
-run_name: pythia-160-all-data
+run_name: t5-base-test
 wandb_entity: "shahules786"
 max_length: 512
 per_digit_tokens: False
