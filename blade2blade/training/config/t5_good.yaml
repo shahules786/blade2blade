@@ -3,7 +3,7 @@ defaults:
 padding_side: "right"
 evil: false
 truncation_side: "right"
-model: "EleutherAI/pythia-160m"
+model: "EleutherAI/pythia-410m-deduped"
 log_dir: "safetyfiles"
 log_wandb: true
 run_name: neox-test
