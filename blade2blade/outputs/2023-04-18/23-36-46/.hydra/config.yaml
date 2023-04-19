@@ -1,0 +1,51 @@
+trainer:
+  _target_: transformers.TrainingArguments
+  output_dir: .
+  learning_rate: 0.0001
+  gradient_checkpointing: false
+  gradient_accumulation_steps: 1
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  adam_epsilon: 1.0e-12
+  weight_decay: 0.001
+  eval_steps: 500
+  save_steps: 500
+  num_train_epochs: 1
+  logging_steps: 10
+  max_grad_norm: 1.0
+  save_total_limit: 4
+  fp16: false
+  lr_scheduler_type: cosine
+  warmup_ratio: 0.15
+  evaluation_strategy: steps
+padding_side: right
+evil: false
+truncation_side: right
+model: t5-small
+log_dir: safetyfiles
+log_wandb: true
+run_name: t5-base-test
+wandb_entity: shahules786
+max_length: 512
+per_digit_tokens: false
+special_tokens:
+  eos_token: </s>
+  sep_token: <sep>
+  pad_token: <pad>
+train_dataset:
+  name:
+  - allenai/prosocial-dialog
+  - shahules786/casual_prompts
+  splits:
+  - - train
+    - validation
+  - - train
+  confidence: null
+test_dataset:
+  name:
+  - allenai/prosocial-dialog
+  splits:
+  - - test
+  confidence: null

@@ -3,6 +3,12 @@ import os
 import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig
+from blade2blade.training.utils import get_model, get_tokenizer
+from blade2blade.training.custom_datasets.utils import get_dataset
+from blade2blade.training.custom_datasets.prosocial import (
+    ProSocialCollator,
+    get_datacollator,
+)
 from transformers import Trainer
 
 from blade2blade.training.custom_datasets.prosocial import ProSocialCollator
@@ -51,7 +57,9 @@ def train(cfg: DictConfig) -> None:
     )
     train_dataset = get_dataset(cfg.train_dataset, tokenizer)
     validation_dataset = get_dataset(cfg.test_dataset, tokenizer)
-    datacollator = ProSocialCollator(
+
+    datacollator = get_datacollator(
+        model.config.is_encoder_decoder,
         tokenizer=tokenizer,
         padding="max_length",
         max_length=cfg.max_length,
