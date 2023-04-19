@@ -116,7 +116,7 @@ class ProSocialCollator:
                 "input_ids": input["input_ids"],
                 "attention_mask": input["attention_mask"],
                 "labels": output["input_ids"],
-                "decoder_attention_mask": output["attention_mask"],
+                # "decoder_attention_mask": output["attention_mask"],
             }
         else:
             input["input_ids"][input["input_ids"] == 0] = -100

@@ -20,6 +20,7 @@ class BladeTrainer(Trainer):
             _ = inputs.pop("decoder_attention_mask")
 
         outputs = model(**inputs)
+        print(outputs.logits.shape)
         loss = outputs.get("loss")
         return (loss, outputs) if return_outputs else loss
 
@@ -58,7 +59,7 @@ def train(cfg: DictConfig) -> None:
     )
 
     # Initialize our Trainer
-    trainer = BladeTrainer(
+    trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,

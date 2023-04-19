@@ -3,10 +3,10 @@ defaults:
 padding_side: "right"
 evil: false
 truncation_side: "right"
-model: "t5-base"
+model: "EleutherAI/pythia-160m"
 log_dir: "safetyfiles"
 log_wandb: true
-run_name: t5-base-test
+run_name: neox-test
 wandb_entity: "shahules786"
 max_length: 512
 per_digit_tokens: False
