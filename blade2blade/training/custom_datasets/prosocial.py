@@ -1,4 +1,6 @@
+import enum
 import itertools
+import re
 from typing import List, Optional, Union
 
 from attr import dataclass
@@ -78,6 +80,62 @@ class ProSocialDataset(Dataset):
         )
 
         return history, output
+
+
+def get_datacollator(is_encoder_decoder: bool, **kwargs):
+    if is_encoder_decoder:
+        return ProSocialCollator(**kwargs)
+    else:
+        return ProSocialCollator2(**kwargs)
+
+
+@dataclass
+class ProSocialCollator2:
+    tokenizer: PreTrainedTokenizerBase
+    evil: bool = False
+    padding: Union[bool, str, PaddingStrategy] = True
+    max_length: Optional[int] = None
+    pad_to_multiple_of: Optional[int] = None
+    truncation: Optional[bool] = True
+
+    def __call__(self, examples):
+        inputs = self.tokenizer(
+            [example[0] for example in examples],
+            padding=False,
+            return_attention_mask=False,
+            truncation=self.truncation,
+            max_length=self.max_length,
+        )
+
+        outputs = self.tokenizer(
+            [example[0] + example[1] for example in examples],
+            padding=False,
+            return_attention_mask=False,
+            truncation=self.truncation,
+            max_length=self.max_length,
+        )
+
+        for i, inp in enumerate(inputs["input_ids"]):
+            outputs["input_ids"][i][: len(inp)] = [-100] * len(inp)
+
+        inputs = self.tokenizer.pad(
+            inputs,
+            padding="max_length",
+            max_length=self.max_length,
+            return_tensors="pt",
+        )
+        outputs = self.tokenizer.pad(
+            outputs,
+            padding="max_length",
+            max_length=self.max_length,
+            return_tensors="pt",
+        )
+
+        return {
+            "input_ids": inputs["input_ids"],
+            "attention_mask": inputs["attention_mask"],
+            "labels": outputs["input_ids"],
+        }
 
 
 @dataclass
