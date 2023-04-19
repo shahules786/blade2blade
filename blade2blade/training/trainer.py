@@ -5,25 +5,15 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig
 from blade2blade.training.utils import get_model, get_tokenizer
 from blade2blade.training.custom_datasets.utils import get_dataset
-from blade2blade.training.custom_datasets.prosocial import ProSocialCollator
+from blade2blade.training.custom_datasets.prosocial import (
+    ProSocialCollator,
+    get_datacollator,
+)
 from transformers import Trainer
 
 from blade2blade.training.custom_datasets.prosocial import ProSocialCollator
 from blade2blade.training.custom_datasets.utils import get_dataset
 from blade2blade.training.utils import get_model, get_tokenizer
-
-
-class BladeTrainer(Trainer):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def compute_loss(self, model, inputs, return_outputs=False):
-        if not model.config.is_encoder_decoder:
-            _ = inputs.pop("decoder_attention_mask")
-
-        outputs = model(**inputs)
-        loss = outputs.get("loss")
-        return (loss, outputs) if return_outputs else loss
 
 
 @hydra.main(version_base=None, config_path="config", config_name="config")
@@ -52,7 +42,9 @@ def train(cfg: DictConfig) -> None:
     )
     train_dataset = get_dataset(cfg.train_dataset, tokenizer)
     validation_dataset = get_dataset(cfg.test_dataset, tokenizer)
-    datacollator = ProSocialCollator(
+
+    datacollator = get_datacollator(
+        model.config.is_encoder_decoder,
         tokenizer=tokenizer,
         padding="max_length",
         max_length=cfg.max_length,
@@ -60,7 +52,7 @@ def train(cfg: DictConfig) -> None:
     )
 
     # Initialize our Trainer
-    trainer = BladeTrainer(
+    trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
