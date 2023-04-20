@@ -130,7 +130,7 @@ class ProSocialCollator2:
             max_length=self.max_length,
             return_tensors="pt",
         )
-
+        outputs["input_ids"][outputs["attention_mask"]==0] = -100
         return {
             "input_ids": inputs["input_ids"],
             "attention_mask": inputs["attention_mask"],
