@@ -1,8 +1,6 @@
-import enum
 import itertools
-import re
 from typing import List, Optional, Union
-
+import torch
 from attr import dataclass
 from datasets import concatenate_datasets, load_dataset
 from datasets.dataset_dict import DatasetDict
@@ -98,44 +96,40 @@ class ProSocialCollator2:
     pad_to_multiple_of: Optional[int] = None
     truncation: Optional[bool] = True
 
+    def process_one(self, example):
+        history, target = example
+        label_mask = [1] * self.max_length
+        history = self.tokenizer.encode(history)
+        target = self.tokenizer.encode(target)
+        input_ids = history + target
+        tokens_remove = max(0, len(input_ids) - self.max_length)
+        if tokens_remove > 0:
+            input_ids = input_ids[tokens_remove:]
+        label_mask[: len(history) - tokens_remove] = [0] * (
+            len(history) - tokens_remove
+        )
+        pad_len = self.max_length - len(input_ids)
+        if pad_len > 0:
+            label_mask[-pad_len:] = [0] * pad_len
+        output = self.tokenizer.pad(
+            {"input_ids": input_ids},
+            padding=self.padding,
+            max_length=self.max_length,
+            return_tensors="pt",
+        )
+        output["labels"] = output["input_ids"].clone()
+        label_mask = torch.tensor(label_mask)
+        output["labels"][label_mask == 0] = -100
+        return output
+
     def __call__(self, examples):
-        inputs = self.tokenizer(
-            [example[0] for example in examples],
-            padding=False,
-            return_attention_mask=False,
-            truncation=self.truncation,
-            max_length=self.max_length,
-        )
+        outputs = {"input_ids": [], "attention_mask": [], "labels": []}
+        for example in examples:
+            out = self.process_one(example)
+            for k, v in out.items():
+                outputs[k].append(v)
 
-        outputs = self.tokenizer(
-            [example[0] + example[1] for example in examples],
-            padding=False,
-            return_attention_mask=False,
-            truncation=self.truncation,
-            max_length=self.max_length,
-        )
-
-        for i, inp in enumerate(inputs["input_ids"]):
-            outputs["input_ids"][i][: len(inp)] = [-100] * len(inp)
-
-        inputs = self.tokenizer.pad(
-            inputs,
-            padding="max_length",
-            max_length=self.max_length,
-            return_tensors="pt",
-        )
-        outputs = self.tokenizer.pad(
-            outputs,
-            padding="max_length",
-            max_length=self.max_length,
-            return_tensors="pt",
-        )
-        outputs["input_ids"][outputs["attention_mask"]==0] = -100
-        return {
-            "input_ids": inputs["input_ids"],
-            "attention_mask": inputs["attention_mask"],
-            "labels": outputs["input_ids"],
-        }
+        return {k: torch.stack(v) for k, v in outputs.items()}
 
 
 @dataclass

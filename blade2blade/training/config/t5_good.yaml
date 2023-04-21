@@ -2,11 +2,11 @@ defaults:
   - trainer: default
 padding_side: "right"
 evil: false
-truncation_side: "right"
+truncation_side: "left"
 model: "EleutherAI/pythia-160m"
 log_dir: "safetyfiles"
 log_wandb: true
-run_name: neox-test
+run_name: neox-160m
 wandb_entity: "shahules786"
 max_length: 512
 per_digit_tokens: False
