@@ -6,7 +6,7 @@ truncation_side: "left"
 model: "EleutherAI/pythia-160m"
 log_dir: "safetyfiles"
 log_wandb: true
-run_name: neox-160m
+run_name: neox-160m-3epochs
 wandb_entity: "shahules786"
 max_length: 512
 per_digit_tokens: False
